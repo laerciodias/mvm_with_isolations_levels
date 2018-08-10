@@ -1,0 +1,4 @@
+.directory
+.ipynb_checkpoints
+results_databases/*.csv
+results_databases/*.db

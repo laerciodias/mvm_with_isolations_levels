@@ -1,0 +1,5 @@
+To add functionalities (here or at toolkit folder):
+
+1. Work your functionality out of the control version up to decide the name of it.
+2. Once the name is decided, add to master branch an empty version of the new functionality and create a dev branch for developing and testing.
+3. After a successfull dev/test/commit in the dev branch, merge the functionality without the tests artefacts (these must be commited on the dev branch).
