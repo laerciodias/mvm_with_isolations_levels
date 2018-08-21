@@ -1,5 +1,8 @@
-To add functionalities (here or at toolkit folder):
+To add (change) functionalities (here or at toolkit folder):
 
-1. Work your functionality out of the control version up to decide the name of it.
-2. Once the name is decided, add to master branch an empty version of the new functionality and create a dev branch for developing and testing.
-3. After a successfull dev/test/commit in the dev branch, merge the functionality without the tests artefacts (these must be commited on the dev branch).
+1. Checkout the development branch.
+2. Develop (change) your functionality.
+3. Test your funcionality.
+4. After tests OK, commit the functionality and the tests to the development branch.
+5. Checkout master.
+6. Get (Merge) the funcionality from development branch. AS A RULE, in the master branch, the notebooks have no cels with output. You should prepare the notebook before commit it to master.

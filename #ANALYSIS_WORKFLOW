@@ -1,0 +1,8 @@
+
+BASIC PLOTS
+- Produce plots for amgnetization, susceptibility and binder cumulant. They will show if there is or not a critical point q_c. 
+- Test M ~ L^-1 scale for q >> q_c.
+
+CRITICAL POINT q_c
+- Do calculation and show a plot.
+- 
