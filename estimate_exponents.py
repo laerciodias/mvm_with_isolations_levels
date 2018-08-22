@@ -7,18 +7,38 @@ import tools as __tools
 
 
 
+'''
+The goal of this class is to provide methods to estimate all the critical exponents.
+
+'''
+
+
+
 def estimate_D(beta_nu, beta_nu_err, gamma_nu, gamma_nu_err):
+    '''
+    Given some exponents, calculates the hyper-scale relation (with error).
+    '''
     return 2*beta_nu + gamma_nu, 2*beta_nu_err + gamma_nu_err
 
 
 
-def estimate_exponent(exponent, qc, qc_err, network_sizes, df, 
-                      do_plot=True, scale_var='N'):
+def estimate_exponent(exponent, qc, network_sizes, df, 
+                      do_plot=False, scale_var='N'):
     
     '''
+    Estimates the exponents 'beta_nu', 'gamma_nu', 'inv_nu' (one per method's  call).
+    
     Parameters:
     - exponent: {'beta_nu', 'gamma_nu', 'inv_nu'}
+    - qc: the critical value for q.
+    - network_sizes: A list of values of the network sizes.
+    - df - a pandas data frame containing the physical quantities.
+    - do_plot: if 'True' a plot will be drawn.
     - scale_var: {'L', 'N'}
+    
+    Use:
+        exp, exp_err, y_til_0, y_til_0_err, reg_rsquared = estimate_exponent(<parameters>)
+        
     '''
     
     if scale_var == 'L':
@@ -30,12 +50,11 @@ def estimate_exponent(exponent, qc, qc_err, network_sizes, df,
         raise NotImplementedError("Parameter 'scale_var' is not valid.")
         
     
-    # Leave just 'N' in the index
+    # Leave just 'N' in the index.
     df = df.reset_index(['q']).copy()
     
     
-    # Set values to use along the method based on the 
-    # 'exponent' parameter
+    # Set values to use along the method based on the 'exponent' parameter.
     if exponent == 'beta_nu':
         y = 'M'
         signal = -1
@@ -58,12 +77,11 @@ def estimate_exponent(exponent, qc, qc_err, network_sizes, df,
         raise NotImplementedError("Parameter 'exponent' not valid.")
         
     
-    # Calculating the function on q_c (with error for the 
-    # Magnetization) by linear interpolation.
+    # Calculating the y function on q_c (with the error for the Magnetization) by linear interpolation.
     yc = []
     yc_err = []
     for n in network_sizes:
-        # Calculate the interpolators
+        # Calculate the interpolators.
         if exponent == 'inv_nu':
             dU_x, dU_y = __tools.derivative(df.loc[n]['q'], df.loc[n][y])
             f = __interp1d(dU_x, __np.abs(dU_y), kind='cubic')
@@ -75,7 +93,7 @@ def estimate_exponent(exponent, qc, qc_err, network_sizes, df,
             f_err = __interp1d(df.loc[n].q, df.loc[n]['M_err'], 
                              kind='cubic')
         
-        # Calculate the function on qc
+        # Calculate the y function on qc.
         yc.append(float(f(qc)))
         if exponent == 'beta_nu':
             yc_err.append(float(f_err(qc)))
@@ -93,7 +111,7 @@ def estimate_exponent(exponent, qc, qc_err, network_sizes, df,
     y_til_0_err = y_til_0*__np.log(10)*__np.sqrt(reg.cov_params()[0][0])
     
     
-    # Plot, if requested.
+    # Do a plot, if requested.
     if do_plot:
         X = __np.linspace(D[0],D[-1])
         A = y_til_0
@@ -112,10 +130,7 @@ def estimate_exponent(exponent, qc, qc_err, network_sizes, df,
         __plt.xscale('log')
         __plt.yscale('log')
         __plt.xlabel(scale_var, fontsize=16)
-        __plt.ylabel(r"$%s(%s)$" % (yLabel, 
-                        __tools.express_measure_with_error(
-                                    qc, qc_err, label = r'q_{c}')),
-                   fontsize=16)
+        __plt.ylabel(r"$%s(q_{c})$" % (yLabel), fontsize=16)
         __plt.title('%s   %s   (R²=%.4f)' % (
             __tools.express_measure_with_error(exp, exp_err, 
                                label = r'%s' % expLabel), 
@@ -137,11 +152,31 @@ def data_collapse(qc, beta_nu, gamma_nu, inv_nu,
                   network_sizes, df_quantities, 
                   scale_var='N', quantities_labels = ['M', 'X']):
     
-    # Reset index of physical quantities dataframe
+    '''
+    Do the data collapse plots for the Magnetization ('M') and the Susceptibility ('X').
+    
+    Magnetization: M_N(q)*N^{\beta/\nu} as a function of |q-q_{c}|*N^{1/\nu}.
+    
+    Susceptibility: X_N(q)*N^{\beta/\nu} as a function of (q-q_{c})*N^{1/\nu}.
+    
+    Parameters:
+    - exponent: {}
+    - qc: the critical value for q.
+    - beta_nu, gamma_nu, inv_nu: critical exponents already calculated.
+    - network_sizes: A list of values of the network sizes.
+    - df_quantities - a pandas data frame containing the physical quantities.
+    - scale_var: {'L', 'N'}.
+    - quantities_labels = ['M'], ['X] or ['M', 'X']. 
+    
+    This method does not have a return.
+        
+    '''
+    
+    # Reset the index of physical quantities data frame.
     df_quantities = df_quantities.reset_index().copy()
     
     if scale_var == 'L':
-        # Linear size of the networks
+        # Linear size of the networks.
         D = df_quantities['N']**0.5
     elif scale_var == 'N':
         D = df_quantities['N']

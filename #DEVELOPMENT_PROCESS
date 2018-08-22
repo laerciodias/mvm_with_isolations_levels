@@ -1,8 +1,8 @@
-To add (change) functionalities (here or at toolkit folder):
+To add (or change) functionalities (here or at toolkit folder):
 
-1. Checkout the development branch.
-2. Develop (change) your functionality.
-3. Test your funcionality.
-4. After tests OK, commit the functionality and the tests to the development branch.
-5. Checkout master.
-6. Get (Merge) the funcionality from development branch. AS A RULE, in the master branch, the notebooks have no cels with output. You should prepare the notebook before commit it to master.
+1. Check out the development branch.
+2. Develop (or change) your functionality.
+3. Test your functionality.
+4. After tests passed, commit the functionality and the tests to the development branch.
+5. Check out the master branch.
+6. Get (or merge) the functionality from the development branch. AS A RULE, in the master branch, the notebooks have no cels with an output. You should prepare the notebook before committing it to the master branch. You should prepare the notebook before committing it to master.

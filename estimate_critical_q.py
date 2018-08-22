@@ -11,9 +11,6 @@ import tools as __tools
 
 
 
-
-
-
 def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
              min_half_bandwidth=2, do_plot=False
              ):
@@ -21,41 +18,44 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
     '''
     This method estimates the critical q (q_c).
     
-    Use: qc, qc_error, best_regs, binder = est.estimate(<parameters>)
+    Use: 
+    
+        qc, qc_error, best_regs, binder = est.estimate(<parameters>)
     
     Parameters:
     
-    - network_sizes: the network sizes used for estimate q_c.
-    - phys_quant: a pandas dataframe containing the values of the binder cumulant
+    - network_sizes: a list/array containing the network sizes used to estimate q_c.
+    - phys_quant: a pandas data frame containing the values of the binder cumulant
                 (besides magnetization and susceptibility).
-    - min_half_bandwidth: the minimum amount of values of q at each side 
-                around the value for a q_c candidate. 
-    - max_half_bandwidth: the maximum amount of values of q at each side 
-                around the value for a q_c candidate.
-    - do_plot: if True the method will plot the regressions results.
+    - min_half_bandwidth: the minimum amount of values of q at each side around the value for a q_c candidate. 
+    - max_half_bandwidth: the maximum amount of values of q at each side around the value for a q_c candidate.
+    - do_plot: if 'True' the method will plot the regressions results.
+    
+    TODO: Something is not right with the use of min_half_bandwidth and max_half_bandwidth because using these parameters one is not able to correctly select the number of points before and after the q_c candidate to use at the q_c estimation. IT NEEDS INVESTIGATION.
+    
     '''
     
-    # Create an empty dataframe for binder cumulant values
+    # Create an empty data frame for binder cumulant values.
     binder = __pd.DataFrame(index=phys_quant.index.levels[1])
     
     # Set columns as values of N, index as values of q.
     for n in network_sizes:
         binder[n] = phys_quant.loc[n].u
     
-    # Let q be a column in the dataframe.
-    # It is easy to do regressions in this way.
+    # Let q be a column in the data frame.
+    # It is easier to do regressions in this way.
     binder.reset_index(inplace=True)
     
-    # find the q_c candidate, considering the smallest and the greatest
-    # network sizes.
+    # Find the q_c candidate considering the smallest and the greatest between network sizes.
     n1 = min(network_sizes)
     n2 = max(network_sizes)
     qCand = find_qc_candidate(n1,n2,phys_quant)
     
+    # Raise an exception in case the candidate is None. 
     if qCand is None:
         raise Exception('Probably there is no critical point. Check the plots of the Binder cumulant.')
     
-    # find the index in binder dataframe for q_c
+    # Find the index in binder data frame for q_c.
     binder2 = binder[binder.q == qCand]
     i_qC = binder2.index[0]
     
@@ -71,7 +71,7 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
         msg += 'Run more simulations to have q in a broader interval.'
         raise Exception(msg)
     
-    # Do regressions considering subsets of q values around qCand.
+    # Do regressions considering all subsets of q values around qCand.
     regressionsDF = []
     
     for li in range(min_half_bandwidth, LI+1):
@@ -93,14 +93,11 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
     regressionsDF = __pd.DataFrame(data=regressionsDF,
                  columns=['qi', 'qf', 'N', 'coef', 'interc', 'R2'])
     
-    # The criterium to choose which q interval we will be use:
+    # The criterium to choose which q interval we will be using:
     # Look at the variance of R2 for the network sizes.
-    # Pick the inteval for the best R2 at the network size with the greatest
-    # variance. Reason: if the binder cumulant is not linear for the
-    # largest interval of values of q, we will have more variance. The best
-    # R2 for the network size with biggest variance in R2 will indicate the
-    # region of values of q where the binder cumulant is a better fit to 
-    # a linear function.
+    # Pick the interval for the best R2 at the network size with the greatest variance. 
+    # Reason: if the binder cumulant is not linear for the largest interval of values of q, we will have an increase in variance. 
+    # The best R2 for the network size with the biggest variance in R2 will indicate the region of values of q where the binder cumulant is a better fit to a linear function.
     var = []
     for n in network_sizes:
         var.append(regressionsDF[regressionsDF.N == n].R2.var())
@@ -113,10 +110,10 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
     qi = regressionsDF.loc[i_bestReg].qi
     qf = regressionsDF.loc[i_bestReg].qf
     
-    # Get the values of binder cumulant for the best regression interval 
+    # Get the values of binder cumulant for the best regression interval.
     binder2 = binder[(binder.q >= qi) & (binder.q <= qf)]
     
-    # Get the regresisons results for the best regression interval
+    # Get the regressions results for the best regression interval
     best_regs = regressionsDF[(regressionsDF.qi == qi) & 
                             (regressionsDF.qf == qf)]
     best_regs.set_index(['N'], inplace=True)
@@ -142,7 +139,7 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
     intersections = __pd.DataFrame(data=intersections, 
                                  columns=['n1','n2','q_inters'])
     
-    # Calculate the critical value of q and the error
+    # Calculate the critical value of q and the error.
     qc = intersections.q_inters.mean()
     qc_error = intersections.q_inters.std()
     
@@ -180,41 +177,29 @@ def estimate(network_sizes, phys_quant, max_half_bandwidth=10,
         __plt.show()
         
         print()
-        print()
         print('CRITICAL POINT')
         print()
-        print('       q_c = %.6f ± %.6f' % (qc, qc_error))   
+        print('       q_c       = %.8f' % (qc))
+        print('       q_c error = %.8f' % (qc_error))
+        print()
     
-    
-    # return relevant information
+
     return qc, qc_error, best_regs, binder2
     
 
 
-
-
-
-
-
-
-
-
-
 def find_qc_candidate(n1, n2, phys_quant, verbose=False):
     '''
-    This function looks for the first value of q after the intersection
-    between the Binder cumulant function u1 and u2 
-    for networks sizes n1 and n2 respectively. The parameter phys_quant
-    is the pandas dataframe where we stored the values of the physical
-    interesting quantities (magnetization, susceptibility and binder
-    cumulant).
+    This function looks for the first value of q after the intersection between the Binder 
+    cumulant function u1 and u2 for networks sizes n1 and n2, respectively. 
+    The parameter phys_quant is the pandas data frame where we stored the values of the physical
+    interesting quantities (magnetization, susceptibility and binder cumulant).
     
-    Under the assumption that u is "well-behaved", such intersection
-    is a good candidate to be the critical point. So, do a visual
-    inspection on the plot of u before use this funcion.
+    Under the assumption that u is "well-behaved" this intersection is a good candidate to be 
+    the critical point. So, before using this function, make a visual inspection of the plot 
+    for the binder cumulant (u).
     
-    The idea is that the intersection is marked by the change of signal
-    at the difference between u1 and u2.
+    The idea is: the intersection is marked by a change of signal in the difference between u1 and u2.
     
     Returns such q value, case it exists. Else, return None.
     
@@ -227,7 +212,7 @@ def find_qc_candidate(n1, n2, phys_quant, verbose=False):
     s = __np.sign(u1 - u2)
     
     try:
-        # The index where the signal changes occurs.
+        # The index where the signal changes occur.
         i = __np.where(s != s[s.index[0]])[0][0]
         
         # Return the corresponding value of q.

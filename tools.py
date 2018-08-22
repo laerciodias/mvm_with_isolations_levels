@@ -11,17 +11,18 @@ import statsmodels.api as __sm
 
 
 
-def derivative(x, y, interp_kind='cubic', dx=1e-8, 
-                   num_multiply=4):
+def derivative(x, y, interp_kind='cubic', dx=1e-8, num_multiply=4):
     '''
     Calculate numerical derivatives, using interpolation to improve results.
     
     Parameters:
-    - num_multiply: if x is an array with n points, this funcion will return an array with
-                    aproximately n*num_multiply points.
+    - num_multiply: if x is an array with n points, this funcion will return an array with aproximately n*num_multiply points.
+                    To have more points is crucial to improving the accuracy of the interpolation.
                     
     Returns an expanded version of x, X, and the corresponding values of the derivative, dY.
     X and dY are numpy arrays.
+    
+    NOTE: This function will be not so good at the extremes of the interval, particularly for hard functions like oscillating functions.
     
     '''
 
