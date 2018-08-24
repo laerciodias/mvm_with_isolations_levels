@@ -1,11 +1,25 @@
-To add functionalities (here or at toolkit folder):
+To add (or change) functionalities (here or at toolkit folder):
 
-1. Work your functionality out of the control version up to decide the name of it.
-2. Once the name is decided, add to master branch an empty version of the new functionality and create a dev branch for developing and testing.
-3. After a successfull dev/test/commit in the dev branch, merge the functionality without the tests artefacts (these must be commited on the dev branch).
-    Steps to merge:
-        - git checkout master
-        - git checkout dev_<functionality> <functionality path filename>
-        - remove the parameters settings and tests from the notebook.
-        - git add <functionality path filename>
-        - git commit -m "Message"
+
+    1. Check out the development branch from the last END POINT of a development cycle commit.
+
+    2. Develop (or change) your functionality.
+
+    3. Test your functionality.
+
+    4. After tests passed, commit the functionality and the tests to the development branch.
+
+    5. Check out the master branch.
+
+    6. Get (or merge) the functionality from the development branch. AS A RULE, in the master branch, the notebooks have no cels with an output. You should prepare the notebook before committing it to the master branch.
+    
+        6.1 To get a file from development branch use:
+    
+                $ git checkout development <file>
+    
+        6.2 To merge from development branch:
+        
+                $ git merge --no-commit development
+        
+            For sure, you will need to solve conflicts! Good luck!
+    

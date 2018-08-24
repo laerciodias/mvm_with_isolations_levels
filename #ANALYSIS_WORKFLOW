@@ -1,0 +1,11 @@
+The following steps should be used to analyze, for example, the simulation results for one value of the visibility parameter.
+
+BASIC PLOTS
+- Produce plots for magnetization, susceptibility and binder cumulant. They will show if there is or not a critical point q_c. 
+- Test the M ~ L^-1 scale for q >> q_c.
+
+CRITICAL POINT q_c
+- Do the calculation of critical point q_c and show a plot.
+
+CRITICAL EXPONENTS
+- Do the estimation of the critical exponents using q_c. See plots to check how good are the fittings at the exponents' estimation. Check the data collapse to evaluate the estimation quality.
