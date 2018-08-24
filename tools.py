@@ -11,7 +11,7 @@ import statsmodels.api as __sm
 
 
 
-def derivative(x, y, interp_kind='cubic', dx=1e-8, num_multiply=4):
+def derivative(x, y, interp_kind='cubic', dx=1e-8, num_multiply=10):
     '''
     Calculate numerical derivatives, using interpolation to improve results.
     
@@ -19,8 +19,7 @@ def derivative(x, y, interp_kind='cubic', dx=1e-8, num_multiply=4):
     - num_multiply: if x is an array with n points, this funcion will return an array with aproximately n*num_multiply points.
                     To have more points is crucial to improving the accuracy of the interpolation.
                     
-    Returns an expanded version of x, X, and the corresponding values of the derivative, dY.
-    X and dY are numpy arrays.
+    Returns an interpolator for the derivative function.
     
     NOTE: This function will be not so good at the extremes of the interval, particularly for hard functions like oscillating functions.
     
@@ -38,7 +37,7 @@ def derivative(x, y, interp_kind='cubic', dx=1e-8, num_multiply=4):
     # Use the derivative method from scipy to calculate the derivative at each xi in X.
     dY = __np.array([__scipy_diff(f, xi, dx=dx) for xi in X])
     
-    return X, dY
+    return __interp1d(X, dY, kind=interp_kind)
 
 
 
@@ -50,7 +49,7 @@ def express_measure_with_error(measure, error, label=''):
             If the label is an empty string (default value) 
             the method returns the measure and the error with the
             correct number of digits.
-            Else it returns a formatted string.
+            Else it returns a formatted string (with no label if the parameter labes is set to '__EMPTY__').
     '''
     
     # I do the trick taking advantage of string representations.
@@ -68,7 +67,10 @@ def express_measure_with_error(measure, error, label=''):
     if label == '':
         return float(xx[0]), float(xx[1])
     else:
-        return '%s = %s ± %s' % (label, xx[0],xx[1])
+        if label == '__EMPTY__':
+            return '%s ± %s' % (xx[0],xx[1])
+        else:
+            return '%s = %s ± %s' % (label, xx[0],xx[1])
 
 
 
@@ -79,9 +81,12 @@ def intersection(p1, p2):
     '''
     Calculates the intersection between the lines
     
-    y = a1 + b1*x and y = a2 + b2*x
+    y1 = a1 + b1*x and y2 = a2 + b2*x
     
-    where p1 = array([a1,b1]) and p2 = array([a2,b2])
+    where p1 = array([a1,b1]) and p2 = array([a2,b2]).
+    
+    NOTE: This method is not ready for vertical lines.
+    
     '''
     a1 = p1[0]
     b1 = p1[1]

@@ -83,10 +83,9 @@ def estimate_exponent(exponent, qc, network_sizes, df,
     for n in network_sizes:
         # Calculate the interpolators.
         if exponent == 'inv_nu':
-            dU_x, dU_y = __tools.derivative(df.loc[n]['q'], df.loc[n][y])
-            f = __interp1d(dU_x, __np.abs(dU_y), kind='cubic')
+            f = __tools.derivative(df.loc[n]['q'], df.loc[n][y])
         else:
-            f = __interp1d(df.loc[n]['q'], df.loc[n][y], kind='cubic')
+            f = __interp1d(df.loc[n]['q'], df.loc[n][y])
 
             
         if exponent == 'beta_nu':
@@ -94,7 +93,11 @@ def estimate_exponent(exponent, qc, network_sizes, df,
                              kind='cubic')
         
         # Calculate the y function on qc.
-        yc.append(float(f(qc)))
+        if exponent == 'inv_nu':
+            yc.append(float(__np.abs(f(qc))))
+        else:
+            yc.append(float(f(qc)))
+        
         if exponent == 'beta_nu':
             yc_err.append(float(f_err(qc)))
     

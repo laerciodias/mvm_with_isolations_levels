@@ -1,7 +1,7 @@
 
-The files .db are the outcome of the simulation.
-If I want to continue the simulation I must copy the .db file to the cluster, run my simulations, check the integrity of the file/results, and replace the copy keeped here.
+The files '.db' are the outcomes of the simulation.
+If I want to continue the simulation I must copy the .db file to the cluster, run my simulations, check the integrity of the file/results, and replace the copy kept here.
 
 
-The files __MXU.csv are the calcutaions of physical quantities (MXU - symbols for manetization (M), susceptibility (X), and Binder cumulant (U)) based on the .db.
-If I runned more simulations cycles, I must update the .csv file using DROPBOX/2017-voterModel/code/resultados_GIT/toolkit/calc_physical_quantities.ipynb
+The files __MXU.csv are the calculations of physical quantities (MXU - symbols for magnetization (M), susceptibility (X), and Binder cumulant (U)) based on the .db.
+If I run more simulations cycles, I must update the .csv file using DROPBOX/2017-voterModel/code/resultados_GIT/toolkit/calc_physical_quantities.ipynb
