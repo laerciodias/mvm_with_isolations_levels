@@ -153,7 +153,7 @@ def estimate_exponent(exponent, qc, network_sizes, df,
 
 def data_collapse(qc, beta_nu, gamma_nu, inv_nu,
                   network_sizes, df_quantities, 
-                  scale_var='N', quantities_labels = ['M', 'X']):
+                  scale_var='N', quantities_labels = ['M', 'X'], plot_title=''):
     
     '''
     Do the data collapse plots for the Magnetization ('M') and the Susceptibility ('X').
@@ -201,7 +201,7 @@ def data_collapse(qc, beta_nu, gamma_nu, inv_nu,
             df_quantities['y_tilde'] = df_quantities['X']*D**(-gamma_nu)
             df_quantities['x'] = (df_quantities['q'] - qc)*D**(inv_nu)
             xlabel = r'$(q-q_c)%s^{1/\nu}$' % (scale_var)
-            ylabel = r"$\chi_{%s}(q)%s^{\beta/\nu}$" % (scale_var,scale_var)
+            ylabel = r"$\chi_{%s}(q)%s^{-\gamma/\nu}$" % (scale_var,scale_var)
         
         __plt.figure(figsize=(7,5))
         for i in range(len(network_sizes)):
@@ -222,8 +222,12 @@ def data_collapse(qc, beta_nu, gamma_nu, inv_nu,
     
         __plt.legend(loc=(1.05,0))
         
+        __plt.title(plot_title, fontsize=18)
+        
         if q_label == 'M':
             __plt.xscale('log')
+            
+        __plt.show()
 
 
 
