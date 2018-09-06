@@ -53,11 +53,11 @@ class Test_estimate_exponents(unittest.TestCase):
 
         exp, exp_err, y_til_0, y_til_0_err, reg_rsquared = est.estimate_exponent('inv_nu', 0.14198322015083814, N, phys_quant, scale_var='N')
         
-        self.assertEqual(exp           , 0.5727956523376243  )
-        self.assertEqual(exp_err       , 0.14485977821764776 )
-        self.assertEqual(y_til_0       , 0.14361272665855981 )
-        self.assertEqual(y_til_0_err   , 0.16617529896166183 )
-        self.assertEqual(reg_rsquared  , 0.8390144482270253  )     
+        self.assertEqual(exp           , 0.5729151273686817  )
+        self.assertEqual(exp_err       , 0.14429340608736374 )
+        self.assertEqual(y_til_0       , 0.14364864190364954 )
+        self.assertEqual(y_til_0_err   , 0.16556698280213575 )
+        self.assertEqual(reg_rsquared  , 0.8401259288029657  )     
         
         
         D, D_err = est.estimate_D(0.06577135890045809, 0.00904406886844031, 0.8906263066183149, 0.05260514357833005)

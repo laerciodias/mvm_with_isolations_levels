@@ -85,7 +85,7 @@ def estimate_exponent(exponent, qc, network_sizes, df,
         if exponent == 'inv_nu':
             f = __tools.derivative(df.loc[n]['q'], df.loc[n][y])
         else:
-            f = __interp1d(df.loc[n]['q'], df.loc[n][y])
+            f = __interp1d(df.loc[n]['q'], df.loc[n][y], kind='cubic')
 
             
         if exponent == 'beta_nu':
